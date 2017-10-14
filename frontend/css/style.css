@@ -101,6 +101,10 @@ header nav {
 	display: none;
 }
 
+#info {
+	color: white;
+}
+
 #links {
 	font-family: 'Open Sans', sans-serif;
 	font-style: normal;

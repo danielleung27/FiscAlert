@@ -2,15 +2,12 @@
  *  Author:    Daniel Leung
  *  Description: Trains the threshold for FraudDetection object
  ******************************************************************************/
-
+import java.util.ArrayList;
+import java.io.FileNotFoundException;
 public class TrainDetection {
     
-    public TrainDetection()
-    {
-    }
-    
     // takes in predictor, cv_data, and cv_labels to train threshold
-    public void train(FraudDetection predictor, double[][] cv_data, 
+    public static void train(FraudDetection predictor, double[][] cv_data, 
                       double[] cv_labels, double stepSize, double iter)
     {
         double prev_score = 0;
@@ -33,7 +30,7 @@ public class TrainDetection {
     }
     
     // calculates f1_score of predictor with cv_data
-    public double f1_score(FraudDetection predictor, double[][] cv_data, double[] cv_labels)
+    public static double f1_score(FraudDetection predictor, double[][] cv_data, double[] cv_labels)
     {
         double precision = 0; // tp/(tp + fp)
         double recall = 0; // tp(tp + fn)
@@ -60,13 +57,15 @@ public class TrainDetection {
     }
     
     // test client
-    public static void main(String[] args)
+    public static void main(String[] args) throws FileNotFoundException
     {
-        double[][] data = null;
-        double[][] cv_data = null;
+        ArrayList<String> raw_data_clean = GenerateData.createCleanData(100);
+        ArrayList<String> raw_data_cv = GenerateData.createAnomalyData(100);
+        double[][] data = GenerateData.parseData(raw_data_clean);
+        double[][] cv_data = GenerateData.parseData(raw_data_cv);
         double[] cv_labels = null;
         FraudDetection predictor = new FraudDetection(data, 0.05);
-        TrainDetection trainer = new TrainDetection();
-        trainer.train(predictor, cv_data, cv_labels, 0.05, 100);
+        train(predictor, cv_data, cv_labels, 0.05, 100);
+        System.out.println(f1_score(predictor, cv_data, cv_labels));
     }
 }

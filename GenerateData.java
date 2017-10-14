@@ -8,7 +8,21 @@ import java.util.Scanner;
 
 public class GenerateData
 {
+ // constants
+ //============================================================================
     private static int[] cv_labels;
+    private static final int ANOMALY = 1;
+    private static final int NORMAL = 0;
+    private static final int NUM_CATEGORIES = 3;
+    private static final int NUM_PREVIOUS_ENTRIES = 10;
+    private static final int MIN_IN_HOUR = 60;
+    private static final int ZERO_PLACEHOLDER = 0;
+    private static final int DEFAULT_SEED = 3;
+    private static String location = "NY-Albany_42.6526N,073.7562W";
+    private static String randLocation1 = "CA-Sacramento_38.5816N,121.4944W";
+    private static String randLocation2 = "AL-Montgomery_32.3668N,086.3000W";
+    //=============================================================================
+    
     public static void main(String[] args) throws FileNotFoundException 
     {
         ArrayList<String> rawAnomData = createAnomalyData(100, 3, 5);
@@ -16,7 +30,7 @@ public class GenerateData
         
         double[][] parData = parseData(rawAnomData);
         //System.out.println(Arrays.toString(get_cv_labels()));
-        //print2dArr(parData);
+        print2dArr(parData);
     }
     
     private static void print2dArr(double[][] arr)
@@ -44,16 +58,16 @@ public class GenerateData
             for (; a < num; a++)
             {
                 //System.out.println(0 + " ");
-                ret.add(0);
+                ret.add(NORMAL);
             }
             //System.out.println(1 + " ");
-            ret.add(1);
+            ret.add(ANOMALY);
             a++;
         }
         for (int i = list.get(list.size()-1); i < size; i++)
         {
             //System.out.println(0 + " ");
-            ret.add(0);
+            ret.add(NORMAL);
         }
         int[] retArr = new int[ret.size()];
         for (int i = 0; i < ret.size(); i++)
@@ -65,20 +79,20 @@ public class GenerateData
     // rawData.length must be greater than 10
     public static double[][] parseData(ArrayList<String> rawData)
     {
-        double[][] parsed = new double[3][rawData.size()];
+        double[][] parsed = new double[NUM_CATEGORIES][rawData.size()];
         String data;
-        String[] prevDatas = new String[10];
-        double[][] prevEntries = new double[10][2];
+        String[] prevDatas = new String[NUM_PREVIOUS_ENTRIES];
+        double[][] prevEntries = new double[NUM_PREVIOUS_ENTRIES][2];
         for (int i = 0; i < 10; i++)
         {
             // one row of data
             data = rawData.get(i);
             //time in minutes
-            parsed[0][i] = Double.parseDouble(data.substring(11, 13)) * 60 + Integer.parseInt(data.substring(14, 16));
+            parsed[0][i] = Double.parseDouble(data.substring(11, 13)) * MIN_IN_HOUR + Integer.parseInt(data.substring(14, 16));
             // dollar amount
             parsed[1][i] = Double.parseDouble(data.substring(17, 21));
             // place holder for absolute distance differences
-            parsed[2][i] = 0;
+            parsed[2][i] = ZERO_PLACEHOLDER;
             prevDatas[i] = data;
         }
         
@@ -88,7 +102,7 @@ public class GenerateData
             data = rawData.get(i);
             prevDatas[i%10] = data;
             //time in minutes
-            parsed[0][i] = Double.parseDouble(data.substring(11, 13)) * 60 + Double.parseDouble(data.substring(14, 16));
+            parsed[0][i] = Double.parseDouble(data.substring(11, 13)) * MIN_IN_HOUR + Double.parseDouble(data.substring(14, 16));
             // dollar amount
             parsed[1][i] = Double.parseDouble(data.substring(17, 21));
             // absolute distance difference average from last 10 entries
@@ -114,50 +128,53 @@ public class GenerateData
         return (sum/prevEntries.length);
     }
     
+    // shift the guassian shift to return a positive value
+    private static double gaussShift(Random rand, int seed)
+    {
+     return (((rand.nextGaussian()%seed)+seed)/(2*seed));
+    }
+    
     // generate fake data with a few anomalies
     public static ArrayList<String> createAnomalyData(int numEntries, double anomsPerc, int seed) throws FileNotFoundException 
     {
         ArrayList<String> list = new ArrayList<String>();
         cv_labels = new int[numEntries];
         Scanner sc = new Scanner(new File("Locations.txt"));
-        String location = "NY-Albany_42.6526N,073.7562W";
-        String randLocation1 = "CA-Sacramento_38.5816N,121.4944W";
-        String randLocation2 = "AL-Montgomery_32.3668N,086.3000W";
+        // irrelevant initializations for these variables
         double amount = 0;
         int year = 2012, mon=1, day=1;
-        //Date date = Calendar.set(112, 7, 25);
-        int hour = 8;
-        int min = 0;
-        Random rand = new Random(3);
+        int hour = 8, min = 0;
+        
+        Random rand = new Random(DEFAULT_SEED);
         Random randAnoms = new Random(seed);
         
         for (int i = 0; i < numEntries; i++)
         { 
             if (randAnoms.nextInt(100) <= anomsPerc)
             {
-                cv_labels[i] = 1;
-                hour = (int)((((rand.nextGaussian()%3)+3)/6) * 8);
-                min = (int)((((rand.nextGaussian()%3)+3)/6) * 59);
+                cv_labels[i] = ANOMALY;
+                hour = (int)(gaussShift(rand, DEFAULT_SEED) * 8);
+                min = (int)(gaussShift(rand, DEFAULT_SEED) * 59);
             }
             else
             {
-                hour = 8 + (int)((((rand.nextGaussian()%3)+3)/6) * 15);
-                min = (int)((((rand.nextGaussian()%3)+3)/6) * 59);
+                hour = 8 + (int)(gaussShift(rand, DEFAULT_SEED) * 15);
+                min = (int)(gaussShift(rand, DEFAULT_SEED) * 59);
             }
             
             if (randAnoms.nextInt(100) <= anomsPerc)
             {
-                cv_labels[i] = 1;
-                amount = 1000 + ((((rand.nextGaussian()%3)+3)/6) * 1000);
+                cv_labels[i] = ANOMALY;
+                amount = 1000 + (gaussShift(rand, DEFAULT_SEED) * 1000);
             }
             else
             {
-                amount = ((((rand.nextGaussian()%3)+3)/6)*(100));
+                amount = (gaussShift(rand, DEFAULT_SEED) * 100);
             }
             
             if (randAnoms.nextInt(100) <= anomsPerc)
             {
-                cv_labels[i] = 1;
+                cv_labels[i] = ANOMALY;
                 if (i%2 == 0)
                     location = randLocation1;
                 else
@@ -204,21 +221,19 @@ public class GenerateData
     {
         ArrayList<String> list = new ArrayList<String>();
         Scanner sc = new Scanner(new File("Locations.txt"));
-        String location = "NY-Albany_42.6526N,073.7562W";
         double amount = 0;
         int year = 2012, mon=1, day=1;
-        //Date date = Calendar.set(112, 7, 25);
-        int hour = 8;
-        int min = 0;
-        Random rand = new Random(3);
+        int hour = 8, min = 0;
+        
+        Random rand = new Random(DEFAULT_SEED);
         
         for (int i = 0; i < numEntries; i++)
         { 
-            hour = 8 + (int)((((rand.nextGaussian()%3)+3)/6)*(15));
-            min = (int)((((rand.nextGaussian()%3)+3)/6)*(59));
+            hour = 8 + (int)(gaussShift(rand, DEFAULT_SEED) * 15);
+            min = (int)(gaussShift(rand, DEFAULT_SEED) * 59);
             
-            amount = (((rand.nextGaussian()%3)+3)/6)*(1000);
-            
+            amount = gaussShift(rand, DEFAULT_SEED) * 100;
+
             if (i != 0 && i % (numEntries/3) == 0)
                 location = sc.nextLine();
             else

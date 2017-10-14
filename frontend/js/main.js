@@ -3,12 +3,12 @@ function onSubmit() {
 };
 
 
-const login = document.querySelector('#form');
-console.log(login.textContent);
+const form = document.querySelector('#form');
+console.log(form.textContent);
 let name = document.querySelector('#name');
 console.log(name.textContent);
-const submit = document.querySelector('#button');
-console.log(submit.textContent);
-submit.addEventListener('onclick', onSubmit());
+const button = document.querySelector('#button');
+console.log(button.textContent);
+button.addEventListener('click', onSubmit);
 const info = document.querySelector('#info');
  

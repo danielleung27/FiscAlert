@@ -1,3 +1,7 @@
+function getForm(){
+    initial.classList.add("hidden");
+    form.classList.remove("hidden");
+}
 function onSubmit() {
     console.log("clicked");
     console.log(name.value);
@@ -19,7 +23,9 @@ function createInfo() {
 
 }
 
+const initial = document.querySelector('#initial');
 
+initial.addEventListener('click', getForm);
 const form = document.querySelector('#form');
 let name = document.querySelector('#name');
 const button = document.querySelector('#button');

@@ -18,7 +18,7 @@ button a, header a, div a{
 
 #button-section{
 	width: 100%;
-	border: 1px solid red;
+	/*border: 1px solid red;*/
 	display: flex;
 	justify-content: center;
 	align-content: center;

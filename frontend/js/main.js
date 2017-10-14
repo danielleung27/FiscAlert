@@ -37,6 +37,7 @@ function createInfo() {
     //fileOpt.classList.add('hidden');
     console.log("Creating info");
     const hello = document.querySelector('#hello');
+    hello.innerHTML = '';
     const helloMessage = document.createElement('p');
     helloMessage.textContent = "Hello, " + name
         + ". Here is your financial security status";

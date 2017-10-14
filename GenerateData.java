@@ -87,10 +87,15 @@ public class GenerateData
         {
             // one row of data
             data = rawData.get(i);
+            // put into better format
+            data = data.replaceAll(",", "_");
+            String[] dataAr = data.split("_");
+            
             //time in minutes
-            parsed[0][i] = Double.parseDouble(data.substring(11, 13)) * MIN_IN_HOUR + Integer.parseInt(data.substring(14, 16));
+            parsed[0][i] = Integer.parseInt(dataAr[1].split(":")[0]) * MIN_IN_HOUR + Integer.parseInt(dataAr[1].split(":")[1]);
             // dollar amount
-            parsed[1][i] = Double.parseDouble(data.substring(17, 21));
+            parsed[1][i] = Double.parseDouble(dataAr[2]);
+            
             // place holder for absolute distance differences
             parsed[2][i] = ZERO_PLACEHOLDER;
             prevDatas[i] = data;
@@ -101,12 +106,20 @@ public class GenerateData
             // one row of data
             data = rawData.get(i);
             prevDatas[i%10] = data;
+            // put into better format
+            data = data.replaceAll(",", "_");
+            String[] dataAr = data.split("_");
+            
             //time in minutes
-            parsed[0][i] = Double.parseDouble(data.substring(11, 13)) * MIN_IN_HOUR + Double.parseDouble(data.substring(14, 16));
+            parsed[0][i] = Integer.parseInt(dataAr[1].split(":")[0]) * MIN_IN_HOUR + Integer.parseInt(dataAr[1].split(":")[1]);
             // dollar amount
-            parsed[1][i] = Double.parseDouble(data.substring(17, 21));
+            parsed[1][i] = Double.parseDouble(dataAr[2]);
+            
+            double lat = Double.parseDouble(dataAr[4].substring(0, dataAr[4].length()-1));
+            double lon = Double.parseDouble(dataAr[5].substring(0, dataAr[5].length()-1));
+            
             // absolute distance difference average from last 10 entries
-            parsed[2][i] = calculateDistance(Double.parseDouble(data.substring(data.length()-18, data.length()-11)), Double.parseDouble(data.substring(data.length()-9, data.length()-1)), prevEntries);
+            parsed[2][i] = calculateDistance(lat, lon, prevEntries);
         }
         
         return parsed;

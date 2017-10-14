@@ -8,20 +8,22 @@ import java.util.Scanner;
 
 public class GenerateData
 {
+    private static int[] cv_labels;
     public static void main(String[] args) throws FileNotFoundException 
     {
         ArrayList<String> rawAnomData = createAnomalyData(100, 3, 5);
-        //ArrayList<String> rawCleanData = createCleanData(100);
+        ArrayList<String> rawCleanData = createCleanData(100);
         
         double[][] parData = parseData(rawAnomData);
-        print2dArr(parData);
+        //System.out.println(Arrays.toString(get_cv_labels()));
+        //print2dArr(parData);
     }
     
     private static void print2dArr(double[][] arr)
     {
-        for (int r = 0; r < arr.length; r++)
+        for (int c = 0; c < arr[0].length; c++)
         {
-            for (int c = 0; c < arr[0].length; c++)
+            for (int r = 0; r < arr.length; r++)
             {
                 System.out.print(arr[r][c] + " ");
             }
@@ -29,37 +31,41 @@ public class GenerateData
         }
     }
     
-    private static void printCvLabels(ArrayList<Integer> list)
+    private static int[] createCvLabels(ArrayList<Integer> list)
     {
-    	ArrayList<Integer> ret = new ArrayList<Integer>();
-    	int size = list.remove(0), num;
-    	Collections.sort(list);
-    	System.out.println(list.size() + " " + Arrays.toString(list.toArray()));
-    	int a=1;
-    	for (int i = 0; i < list.size(); i++)
-    	{
-    		num = list.get(i);
-    		for (; a < num; a++)
-    		{
-    			System.out.println(0 + " ");
-    			ret.add(0);
-    		}
-    		System.out.println(1 + " ");
-			ret.add(1);
-			a++;
-    	}
-    	for (int i = list.get(list.size()-1); i < size; i++)
-    	{
-			System.out.println(0 + " ");
-			ret.add(0);
-    	}
+        ArrayList<Integer> ret = new ArrayList<Integer>();
+        int size = list.remove(0), num;
+        Collections.sort(list);
+        //System.out.println(list.size() + " " + Arrays.toString(list.toArray()));
+        int a=1;
+        for (int i = 0; i < list.size(); i++)
+        {
+            num = list.get(i);
+            for (; a < num; a++)
+            {
+                //System.out.println(0 + " ");
+                ret.add(0);
+            }
+            //System.out.println(1 + " ");
+            ret.add(1);
+            a++;
+        }
+        for (int i = list.get(list.size()-1); i < size; i++)
+        {
+            //System.out.println(0 + " ");
+            ret.add(0);
+        }
+        int[] retArr = new int[ret.size()];
+        for (int i = 0; i < ret.size(); i++)
+            retArr[i] = ret.get(i);
+        return retArr;
     }
     
     // parse data into usable information
     // rawData.length must be greater than 10
     public static double[][] parseData(ArrayList<String> rawData)
     {
-        double[][] parsed = new double[rawData.size()][3];
+        double[][] parsed = new double[3][rawData.size()];
         String data;
         String[] prevDatas = new String[10];
         double[][] prevEntries = new double[10][2];
@@ -68,11 +74,11 @@ public class GenerateData
             // one row of data
             data = rawData.get(i);
             //time in minutes
-            parsed[i][0] = Double.parseDouble(data.substring(11, 13)) * 60 + Integer.parseInt(data.substring(14, 16));
+            parsed[0][i] = Double.parseDouble(data.substring(11, 13)) * 60 + Integer.parseInt(data.substring(14, 16));
             // dollar amount
-            parsed[i][1] = Double.parseDouble(data.substring(17, 21));
+            parsed[1][i] = Double.parseDouble(data.substring(17, 21));
             // place holder for absolute distance differences
-            parsed[i][2] = 0;
+            parsed[2][i] = 0;
             prevDatas[i] = data;
         }
         
@@ -82,11 +88,11 @@ public class GenerateData
             data = rawData.get(i);
             prevDatas[i%10] = data;
             //time in minutes
-            parsed[i][0] = Double.parseDouble(data.substring(11, 13)) * 60 + Integer.parseInt(data.substring(14, 16));
+            parsed[0][i] = Double.parseDouble(data.substring(11, 13)) * 60 + Double.parseDouble(data.substring(14, 16));
             // dollar amount
-            parsed[i][1] = Double.parseDouble(data.substring(17, 21));
+            parsed[1][i] = Double.parseDouble(data.substring(17, 21));
             // absolute distance difference average from last 10 entries
-            parsed[i][2] = calculateDistance(Double.parseDouble(data.substring(data.length()-18, data.length()-11)), Double.parseDouble(data.substring(data.length()-9, data.length()-1)), prevEntries);
+            parsed[2][i] = calculateDistance(Double.parseDouble(data.substring(data.length()-18, data.length()-11)), Double.parseDouble(data.substring(data.length()-9, data.length()-1)), prevEntries);
         }
         
         return parsed;
@@ -112,12 +118,12 @@ public class GenerateData
     public static ArrayList<String> createAnomalyData(int numEntries, double anomsPerc, int seed) throws FileNotFoundException 
     {
         ArrayList<String> list = new ArrayList<String>();
-        ArrayList<Integer> allAnoms = new ArrayList<Integer>();
+        cv_labels = new int[numEntries];
         Scanner sc = new Scanner(new File("Locations.txt"));
         String location = "NY-Albany_42.6526N,073.7562W";
         String randLocation1 = "CA-Sacramento_38.5816N,121.4944W";
         String randLocation2 = "AL-Montgomery_32.3668N,086.3000W";
-        int amount = 0;
+        double amount = 0;
         int year = 2012, mon=1, day=1;
         //Date date = Calendar.set(112, 7, 25);
         int hour = 8;
@@ -129,33 +135,33 @@ public class GenerateData
         { 
             if (randAnoms.nextInt(100) <= anomsPerc)
             {
-            	allAnoms.add(i);
-            	hour = rand.nextInt(8);
-                min = rand.nextInt(59);
+                cv_labels[i] = 1;
+                hour = (int)((((rand.nextGaussian()%3)+3)/6) * 8);
+                min = (int)((((rand.nextGaussian()%3)+3)/6) * 59);
             }
             else
             {
-                hour = 8 + rand.nextInt(15);
-                min = rand.nextInt(59);
+                hour = 8 + (int)((((rand.nextGaussian()%3)+3)/6) * 15);
+                min = (int)((((rand.nextGaussian()%3)+3)/6) * 59);
             }
             
             if (randAnoms.nextInt(100) <= anomsPerc)
             {
-            	allAnoms.add(i);
-                amount = 1000 + rand.nextInt(1000);
+                cv_labels[i] = 1;
+                amount = 1000 + ((((rand.nextGaussian()%3)+3)/6) * 1000);
             }
             else
             {
-                amount = rand.nextInt(100);
+                amount = ((((rand.nextGaussian()%3)+3)/6)*(100));
             }
             
             if (randAnoms.nextInt(100) <= anomsPerc)
             {
-            	allAnoms.add(i);
-             if (i%2 == 0)
-              location = randLocation1;
-             else
-              location = randLocation2;
+                cv_labels[i] = 1;
+                if (i%2 == 0)
+                    location = randLocation1;
+                else
+                    location = randLocation2;
             }
             else if (i != 0 && i % (numEntries/3) == 0)
             {
@@ -165,11 +171,11 @@ public class GenerateData
             {
                 location = "NY-Albany_42.6526N,073.7562W";
             }
-            
             list.add(String.format("%02d", mon) + "/" + String.format("%02d", day) 
                          + "/" + String.format("%04d", year) + "," + String.format("%02d", hour) 
-                         + ":" + String.format("%02d", min) + "," + String.format("%04d", amount) 
+                         + ":" + String.format("%02d", min) + "," + String.format("%04f", amount) 
                          + "," + location);
+            //System.out.println(list.get(i));
             day++;
             if (mon == 2 && day == 28)
             {
@@ -185,10 +191,12 @@ public class GenerateData
             }
         }
         sc.close();
-
-        allAnoms.add(numEntries);
-        printCvLabels(allAnoms);
         return list;
+    }
+    
+    public static int[] get_cv_labels()
+    {
+        return cv_labels;
     }
     
     // generate clean fake data for training
@@ -197,7 +205,7 @@ public class GenerateData
         ArrayList<String> list = new ArrayList<String>();
         Scanner sc = new Scanner(new File("Locations.txt"));
         String location = "NY-Albany_42.6526N,073.7562W";
-        int amount = 0;
+        double amount = 0;
         int year = 2012, mon=1, day=1;
         //Date date = Calendar.set(112, 7, 25);
         int hour = 8;
@@ -206,21 +214,21 @@ public class GenerateData
         
         for (int i = 0; i < numEntries; i++)
         { 
-            hour = 8 + rand.nextInt(15);
-            min = rand.nextInt(59);
+            hour = 8 + (int)((((rand.nextGaussian()%3)+3)/6)*(15));
+            min = (int)((((rand.nextGaussian()%3)+3)/6)*(59));
             
-            amount = rand.nextInt(1000);
+            amount = (((rand.nextGaussian()%3)+3)/6)*(1000);
             
             if (i != 0 && i % (numEntries/3) == 0)
                 location = sc.nextLine();
             else
                 location = "NY-Albany_42.6526N,073.7562W";
             
-           list.add(String.format("%02d", mon) + "/" + String.format("%02d", day) 
+            list.add(String.format("%02d", mon) + "/" + String.format("%02d", day) 
                          + "/" + String.format("%04d", year) + "," 
                          + String.format("%02d", hour) + ":" + String.format("%02d", min) 
-                         + "," + String.format("%04d", amount) + "," + location);
-            day++;
+                         + "," + String.format("%04f", amount) + "," + location);
+            day++; 
             if (mon == 2 && day == 28)
             {
                 mon++; day = 1;

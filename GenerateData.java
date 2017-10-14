@@ -8,14 +8,14 @@ public class GenerateData
 {
     public static void main(String[] args) throws FileNotFoundException 
     {
-       /* ArrayList<String> rawAnomData = createAnomalyData();
-        //ArrayList<String> rawCleanData = createCleanData();
+        ArrayList<String> rawAnomData = createAnomalyData(100, 3);
+        //ArrayList<String> rawCleanData = createCleanData(100);
         
         double[][] parData = parseData(rawAnomData);
-        print2dArr(parData);*/ 
+        print2dArr(parData);
     }
     
- /*   private static void print2dArr(double[][] arr)
+    private static void print2dArr(double[][] arr)
     {
         for (int r = 0; r < arr.length; r++)
         {
@@ -25,7 +25,7 @@ public class GenerateData
             }
             System.out.println();
         }
-    }*/
+    }
     
     // parse data into usable information
     // rawData.length must be greater than 10
@@ -53,14 +53,12 @@ public class GenerateData
             // one row of data
             data = rawData.get(i);
             prevDatas[i%10] = data;
-            // # of entries to follow
-            parsed[i][0] = 3;
             //time in minutes
-            parsed[i][1] = Double.parseDouble(data.substring(11, 13)) * 60 + Integer.parseInt(data.substring(14, 16));
+            parsed[i][0] = Double.parseDouble(data.substring(11, 13)) * 60 + Integer.parseInt(data.substring(14, 16));
             // dollar amount
-            parsed[i][2] = Double.parseDouble(data.substring(17, 21));
+            parsed[i][1] = Double.parseDouble(data.substring(17, 21));
             // absolute distance difference average from last 10 entries
-            parsed[i][3] = calculateDistance(Double.parseDouble(data.substring(data.length()-18, data.length()-11)), Double.parseDouble(data.substring(data.length()-9, data.length()-1)), prevEntries);
+            parsed[i][2] = calculateDistance(Double.parseDouble(data.substring(data.length()-18, data.length()-11)), Double.parseDouble(data.substring(data.length()-9, data.length()-1)), prevEntries);
         }
         
         return parsed;
@@ -83,7 +81,7 @@ public class GenerateData
     }
     
     // generate fake data with a few anomalies
-    public static ArrayList<String> createAnomalyData(int numEntries) throws FileNotFoundException 
+    public static ArrayList<String> createAnomalyData(int numEntries, double anomsPerc) throws FileNotFoundException 
     {
         ArrayList<String> list = new ArrayList<String>();
         Scanner sc = new Scanner(new File("Locations.txt"));
@@ -96,52 +94,46 @@ public class GenerateData
         int hour = 8;
         int min = 0;
         Random rand = new Random(3);
+        Random randAnoms = new Random(5);
         
         for (int i = 0; i < numEntries; i++)
         { 
-            if (i == 26)
+            if (randAnoms.nextInt(100) <= anomsPerc)
             {
-                hour = 2;
-                min = 57;
-            }
-            else if (i == 49)
-            {
-                hour = 23;
-                min = 16;
-            }
-            else if (i == 27)
-            {
-                hour = 4;
-                min = 12;
+            	hour = rand.nextInt(8);
+                min = rand.nextInt(59);
             }
             else
             {
-                hour = 8 + rand.nextInt(11);
+                hour = 8 + rand.nextInt(15);
                 min = rand.nextInt(59);
             }
             
-            if (i == 57)
-                amount = 3141;
-            else if (i == 83)
-                amount = 1500;
-            else if (i == 92)
-                amount = 5243;
+            if (randAnoms.nextInt(100) <= anomsPerc)
+            {
+                amount = 1000 + rand.nextInt(1000);
+            }
             else
-                amount = 5 + rand.nextInt(30);
+            {
+                amount = rand.nextInt(100);
+            }
             
-            if (i == 34)
-                location = randLocation1;
-            else if (i == 63)
-                location = randLocation2;
+            if (randAnoms.nextInt(100) <= anomsPerc)
+            {
+            	if (i%2 == 0)
+            		location = randLocation1;
+            	else
+            		location = randLocation2;
+            }
             else if (i != 0 && i % (numEntries/3) == 0)
+            {
                 location = sc.nextLine();
+            }
             else
+            {
                 location = "NY-Albany_42.6526N,073.7562W";
+            }
             
-            //System.out.println(String.format("%02d", mon) + "/" + String.format("%02d", day) 
-            //   + "/" + String.format("%04d", year) + "," + String.format("%02d", hour) 
-            //   + ":" + String.format("%02d", min) + "," + String.format("%04d", amount) 
-            //   + "," + location);
             list.add(String.format("%02d", mon) + "/" + String.format("%02d", day) 
                          + "/" + String.format("%04d", year) + "," + String.format("%02d", hour) 
                          + ":" + String.format("%02d", min) + "," + String.format("%04d", amount) 
@@ -179,21 +171,17 @@ public class GenerateData
         
         for (int i = 0; i < numEntries; i++)
         { 
-            hour = 8 + rand.nextInt(11);
+            hour = 8 + rand.nextInt(15);
             min = rand.nextInt(59);
             
-            amount = 5 + rand.nextInt(30);
+            amount = rand.nextInt(1000);
             
             if (i != 0 && i % (numEntries/3) == 0)
                 location = sc.nextLine();
             else
                 location = "NY-Albany_42.6526N,073.7562W";
             
-            //System.out.println(String.format("%02d", mon) + "/" 
-            //    + String.format("%02d", day) + "/" + String.format("%04d", year) 
-            //    + "," + String.format("%02d", hour) + ":" + String.format("%02d", min) 
-            //    + "," + String.format("%04d", amount) + "," + location);
-            list.add(String.format("%02d", mon) + "/" + String.format("%02d", day) 
+           list.add(String.format("%02d", mon) + "/" + String.format("%02d", day) 
                          + "/" + String.format("%04d", year) + "," 
                          + String.format("%02d", hour) + ":" + String.format("%02d", min) 
                          + "," + String.format("%04d", amount) + "," + location);

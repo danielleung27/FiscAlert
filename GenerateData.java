@@ -15,15 +15,15 @@ public class GenerateData
         ArrayList<String> rawCleanData = createCleanData(100);
         
         double[][] parData = parseData(rawAnomData);
-       // System.out.println(Arrays.toString(get_cv_labels()));
+        //System.out.println(Arrays.toString(get_cv_labels()));
         //print2dArr(parData);
     }
     
     private static void print2dArr(double[][] arr)
     {
-        for (int r = 0; r < arr.length; r++)
+        for (int c = 0; c < arr[0].length; c++)
         {
-            for (int c = 0; c < arr[0].length; c++)
+            for (int r = 0; r < arr.length; r++)
             {
                 System.out.print(arr[r][c] + " ");
             }
@@ -74,7 +74,7 @@ public class GenerateData
             // one row of data
             data = rawData.get(i);
             //time in minutes
-            parsed[0][1] = Double.parseDouble(data.substring(11, 13)) * 60 + Integer.parseInt(data.substring(14, 16));
+            parsed[0][i] = Double.parseDouble(data.substring(11, 13)) * 60 + Integer.parseInt(data.substring(14, 16));
             // dollar amount
             parsed[1][i] = Double.parseDouble(data.substring(17, 21));
             // place holder for absolute distance differences
@@ -88,7 +88,7 @@ public class GenerateData
             data = rawData.get(i);
             prevDatas[i%10] = data;
             //time in minutes
-            parsed[0][i] = Double.parseDouble(data.substring(11, 13)) * 60 + Integer.parseInt(data.substring(14, 16));
+            parsed[0][i] = Double.parseDouble(data.substring(11, 13)) * 60 + Double.parseDouble(data.substring(14, 16));
             // dollar amount
             parsed[1][i] = Double.parseDouble(data.substring(17, 21));
             // absolute distance difference average from last 10 entries
@@ -123,7 +123,7 @@ public class GenerateData
         String location = "NY-Albany_42.6526N,073.7562W";
         String randLocation1 = "CA-Sacramento_38.5816N,121.4944W";
         String randLocation2 = "AL-Montgomery_32.3668N,086.3000W";
-        int amount = 0;
+        double amount = 0;
         int year = 2012, mon=1, day=1;
         //Date date = Calendar.set(112, 7, 25);
         int hour = 8;
@@ -136,23 +136,23 @@ public class GenerateData
             if (randAnoms.nextInt(100) <= anomsPerc)
             {
                 cv_labels[i] = 1;
-                hour = rand.nextInt(8);
-                min = rand.nextInt(59);
+                hour = (int)((((rand.nextGaussian()%3)+3)/6) * 8);
+                min = (int)((((rand.nextGaussian()%3)+3)/6) * 59);
             }
             else
             {
-                hour = 8 + rand.nextInt(15);
-                min = rand.nextInt(59);
+                hour = 8 + (int)((((rand.nextGaussian()%3)+3)/6) * 15);
+                min = (int)((((rand.nextGaussian()%3)+3)/6) * 59);
             }
             
             if (randAnoms.nextInt(100) <= anomsPerc)
             {
                 cv_labels[i] = 1;
-                amount = 1000 + rand.nextInt(1000);
+                amount = 1000 + ((((rand.nextGaussian()%3)+3)/6) * 1000);
             }
             else
             {
-                amount = rand.nextInt(100);
+                amount = ((((rand.nextGaussian()%3)+3)/6)*(100));
             }
             
             if (randAnoms.nextInt(100) <= anomsPerc)
@@ -171,11 +171,11 @@ public class GenerateData
             {
                 location = "NY-Albany_42.6526N,073.7562W";
             }
-            
             list.add(String.format("%02d", mon) + "/" + String.format("%02d", day) 
                          + "/" + String.format("%04d", year) + "," + String.format("%02d", hour) 
-                         + ":" + String.format("%02d", min) + "," + String.format("%04d", amount) 
+                         + ":" + String.format("%02d", min) + "," + String.format("%04f", amount) 
                          + "," + location);
+            //System.out.println(list.get(i));
             day++;
             if (mon == 2 && day == 28)
             {
@@ -205,7 +205,7 @@ public class GenerateData
         ArrayList<String> list = new ArrayList<String>();
         Scanner sc = new Scanner(new File("Locations.txt"));
         String location = "NY-Albany_42.6526N,073.7562W";
-        int amount = 0;
+        double amount = 0;
         int year = 2012, mon=1, day=1;
         //Date date = Calendar.set(112, 7, 25);
         int hour = 8;
@@ -214,10 +214,10 @@ public class GenerateData
         
         for (int i = 0; i < numEntries; i++)
         { 
-            hour = 8 + rand.nextInt(15);
-            min = rand.nextInt(59);
+            hour = 8 + (int)((((rand.nextGaussian()%3)+3)/6)*(15));
+            min = (int)((((rand.nextGaussian()%3)+3)/6)*(59));
             
-            amount = rand.nextInt(1000);
+            amount = (((rand.nextGaussian()%3)+3)/6)*(1000);
             
             if (i != 0 && i % (numEntries/3) == 0)
                 location = sc.nextLine();
@@ -227,8 +227,8 @@ public class GenerateData
             list.add(String.format("%02d", mon) + "/" + String.format("%02d", day) 
                          + "/" + String.format("%04d", year) + "," 
                          + String.format("%02d", hour) + ":" + String.format("%02d", min) 
-                         + "," + String.format("%04d", amount) + "," + location);
-            day++;
+                         + "," + String.format("%04f", amount) + "," + location);
+            day++; 
             if (mon == 2 && day == 28)
             {
                 mon++; day = 1;

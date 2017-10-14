@@ -130,23 +130,23 @@ public class GenerateData
             if (randAnoms.nextInt(100) <= anomsPerc)
             {
             	allAnoms.add(i);
-            	hour = rand.nextInt(8);
-                min = rand.nextInt(59);
+            	hour = rand.nextGaussian()*(8);
+                min = rand.nextGaussian()*(59);
             }
             else
             {
-                hour = 8 + rand.nextInt(15);
-                min = rand.nextInt(59);
+                hour = 8 + rand.nextGaussian()*(15);
+                min = rand.nextGaussian()*(59);
             }
             
             if (randAnoms.nextInt(100) <= anomsPerc)
             {
             	allAnoms.add(i);
-                amount = 1000 + rand.nextInt(1000);
+                amount = 1000 + rand.nextGaussian()*(1000);
             }
             else
             {
-                amount = rand.nextInt(100);
+                amount = rand.nextGaussian()*(100);
             }
             
             if (randAnoms.nextInt(100) <= anomsPerc)
@@ -206,10 +206,10 @@ public class GenerateData
         
         for (int i = 0; i < numEntries; i++)
         { 
-            hour = 8 + rand.nextInt(15);
-            min = rand.nextInt(59);
+            hour = 8 + rand.nextGaussian()*(15);
+            min = rand.nextGaussian()*(59);
             
-            amount = rand.nextInt(1000);
+            amount = rand.nextGaussian()*(1000);
             
             if (i != 0 && i % (numEntries/3) == 0)
                 location = sc.nextLine();

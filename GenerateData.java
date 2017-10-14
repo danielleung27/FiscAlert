@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -25,6 +27,32 @@ public class GenerateData
             }
             System.out.println();
         }
+    }
+    
+    private static void printCvLabels(ArrayList<Integer> list)
+    {
+    	ArrayList<Integer> ret = new ArrayList<Integer>();
+    	int size = list.remove(0), num;
+    	Collections.sort(list);
+    	System.out.println(list.size() + " " + Arrays.toString(list.toArray()));
+    	int a=1;
+    	for (int i = 0; i < list.size(); i++)
+    	{
+    		num = list.get(i);
+    		for (; a < num; a++)
+    		{
+    			System.out.println(0 + " ");
+    			ret.add(0);
+    		}
+    		System.out.println(1 + " ");
+			ret.add(1);
+			a++;
+    	}
+    	for (int i = list.get(list.size()-1); i < size; i++)
+    	{
+			System.out.println(0 + " ");
+			ret.add(0);
+    	}
     }
     
     // parse data into usable information
@@ -84,6 +112,7 @@ public class GenerateData
     public static ArrayList<String> createAnomalyData(int numEntries, double anomsPerc, int seed) throws FileNotFoundException 
     {
         ArrayList<String> list = new ArrayList<String>();
+        ArrayList<Integer> allAnoms = new ArrayList<Integer>();
         Scanner sc = new Scanner(new File("Locations.txt"));
         String location = "NY-Albany_42.6526N,073.7562W";
         String randLocation1 = "CA-Sacramento_38.5816N,121.4944W";
@@ -100,7 +129,8 @@ public class GenerateData
         { 
             if (randAnoms.nextInt(100) <= anomsPerc)
             {
-             hour = rand.nextInt(8);
+            	allAnoms.add(i);
+            	hour = rand.nextInt(8);
                 min = rand.nextInt(59);
             }
             else
@@ -111,6 +141,7 @@ public class GenerateData
             
             if (randAnoms.nextInt(100) <= anomsPerc)
             {
+            	allAnoms.add(i);
                 amount = 1000 + rand.nextInt(1000);
             }
             else
@@ -120,6 +151,7 @@ public class GenerateData
             
             if (randAnoms.nextInt(100) <= anomsPerc)
             {
+            	allAnoms.add(i);
              if (i%2 == 0)
               location = randLocation1;
              else
@@ -153,6 +185,9 @@ public class GenerateData
             }
         }
         sc.close();
+
+        allAnoms.add(numEntries);
+        printCvLabels(allAnoms);
         return list;
     }
     

@@ -1,8 +1,3 @@
-/******************************************************************************
-  *  Author:    Daniel Leung
-  *  Description: FraudDetection reads in data, creates features, and trains
-  * each feature using an anomoly detection algorithm
-  ******************************************************************************/
 import java.util.PriorityQueue;
 import java.util.Collections;
 
@@ -10,6 +5,7 @@ public class RunningMedian {
     PriorityQueue<Double> upperQueue;
     PriorityQueue<Double> lowerQueue;
     
+    // constructor
     public RunningMedian()
     {
         lowerQueue = new PriorityQueue<Double>(20, Collections.reverseOrder());
@@ -17,6 +13,8 @@ public class RunningMedian {
         upperQueue.add(Double.POSITIVE_INFINITY);
         lowerQueue.add(Double.NEGATIVE_INFINITY);
     }
+    
+    // adds to median pool
     public void add(double num)
     {
         //adding the number to proper heap
@@ -30,6 +28,8 @@ public class RunningMedian {
         else if (lowerQueue.size() - upperQueue.size() == 2)
             upperQueue.add(lowerQueue.poll());
     }
+    
+    // returns median
     public double median()
     {
         //returning the median

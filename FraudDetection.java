@@ -1,9 +1,3 @@
-/******************************************************************************
- *  Author:    Daniel Leung
- *  Description: FraudDetection reads in data, creates features, and trains
- * each feature using an anomoly detection algorithm
- ******************************************************************************/
-
 public class FraudDetection {
     public Feature[] features; // feature list
     private double threshold; // epsilon bound to mark anomaly
@@ -27,16 +21,13 @@ public class FraudDetection {
     }
     
     // add a new data point
-    public boolean addData(double time, double price, double distance)
+    public boolean addData(double[] newEntry)
     {
-        double[] entry = new double[3];
-        entry[0] = time;
-        entry[1] = price;
-        entry[2] = distance;
-        features[0].addDataPoint(time);
-        features[1].addDataPoint(price);
-        features[2].addDataPoint(distance);
-        return isFraud(entry) == 1;
+        for (int i = 0; i < newEntry.length; i++)
+        {
+            features[i].addDataPoint(newEntry[i]);
+        }
+        return isFraud(newEntry) == 1;
     }
     
     // flags the entry if detected as fraud

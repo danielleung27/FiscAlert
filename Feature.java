@@ -1,14 +1,9 @@
-/******************************************************************************
-  *  Author:    Daniel Leung
-  *  Description: FraudDetection reads in data, creates features, and trains
-  * each feature using an anomoly detection algorithm
-  ******************************************************************************/
-
 public class Feature {
     private double mean; // mean of the feature
     private double sd; // standard deviation of the feature
     private int n; // number of examples trained with
     
+    // constructor
     public Feature(double mean, double sd, int n)
     {
         this.mean = mean;

@@ -1,7 +1,3 @@
-/******************************************************************************
- *  Author:    Daniel Leung
- *  Description: Trains the threshold for FraudDetection object
- ******************************************************************************/
 public class TrainDetection {
 
     // takes in predictor, cv_data, and cv_labels to train threshold

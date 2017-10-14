@@ -2,10 +2,8 @@
  *  Author:    Daniel Leung
  *  Description: Trains the threshold for FraudDetection object
  ******************************************************************************/
-import java.util.ArrayList;
-import java.io.FileNotFoundException;
 public class TrainDetection {
-    
+
     // takes in predictor, cv_data, and cv_labels to train threshold
     public static void train(FraudDetection predictor, double[][] cv_data, 
                       int[] cv_labels, double stepSize, int iter)
@@ -48,7 +46,7 @@ public class TrainDetection {
                 entry[j] = cv_data[j][i];
             }
             int prediction = predictor.isFraud(entry);
-            if (prediction == cv_labels[i]) tp++;
+            if (prediction == cv_labels[i] && prediction == 1) tp++;
             else if (prediction == 1 && cv_labels[i] == 0) fp++;
             else if (prediction == 0 && cv_labels[i] == 1) fn++;
         }
@@ -63,7 +61,6 @@ public class TrainDetection {
     {
         int correct = 0;
         double f1_score = f1_score(predictor, test_data, test_labels);
-        System.out.println("F1_score on test data is: " + f1_score);
         for (int i = 0; i < test_data[0].length; i++)
         {
             double[] entry = new double[test_data.length];
@@ -74,23 +71,9 @@ public class TrainDetection {
             int prediction = predictor.isFraud(entry);
             if (prediction == test_labels[i]) correct++;
         }
-        System.out.println("Accuracy: " + ((double)correct) / test_labels.length);
-    }
-    
-    // test client
-    public static void main(String[] args) throws FileNotFoundException
-    {
-        ArrayList<String> raw_data_clean = GenerateData.createCleanData(1000);
-        ArrayList<String> raw_data_cv = GenerateData.createAnomalyData(1000, 30, 5);
-        int[] cv_labels = GenerateData.get_cv_labels();
-        ArrayList<String> raw_data_test = GenerateData.createAnomalyData(1000, 30, 4);
-        int[] test_labels = GenerateData.get_cv_labels();
-        double[][] data = GenerateData.parseData(raw_data_clean);
-        double[][] cv_data = GenerateData.parseData(raw_data_cv);
-        double[][] test_data = GenerateData.parseData(raw_data_test);
-        FraudDetection predictor = new FraudDetection(data, 0.05);
-        train(predictor, cv_data, cv_labels, 0.05, 1000);
-        System.out.println(predictor.threshold());
-        test(predictor, test_data, test_labels);
-    }
+        System.out.println("Training finished.");
+        System.out.println("F_1 Score: " + f1_score);
+        System.out.println("Accuracy: " + 
+                           (100.0 * correct) / test_labels.length + "%");
+    } 
 }

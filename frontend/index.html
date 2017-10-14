@@ -2,6 +2,7 @@
     <head>
         <link rel =  "stylesheet" href = "css/style.css">
         <link rel =  "stylesheet" href = "css/form.css">
+        <script src = "js/main.js" defer></script>
     </head>
     <body>
         <header>
@@ -20,8 +21,26 @@
         </header>
         <div class = 'non-header'>
             <section id = 'button-section'>
-                <div><a href = "fraud-checking.html">Check the status of your card</a></div>
+                <button id = "initial">Check the status of your card</div>
+                <div id = 'form' class = 'hidden'>
+                        <div>
+                            <label>Name:</label>
+                            <input type="text" id="name">
+                        </div>
+                        <div>
+                                <button id="button">Send your message</button>
+                        </div>
+                    </div>  
+                    <div class = "hidden" id = 'info'>
+                        <div id = 'hello'>
+                            
+                        </div>
+                        <div id = 'fraudInfo'>
+                            
+                        </div>
+                    </div>
             </section>
+
         </div>
             </div>
         </div>

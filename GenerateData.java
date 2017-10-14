@@ -8,7 +8,7 @@ public class GenerateData
 {
     public static void main(String[] args) throws FileNotFoundException 
     {
-        ArrayList<String> rawAnomData = createAnomalyData(100, 3);
+        ArrayList<String> rawAnomData = createAnomalyData(100, 3, 5);
         //ArrayList<String> rawCleanData = createCleanData(100);
         
         double[][] parData = parseData(rawAnomData);
@@ -81,7 +81,7 @@ public class GenerateData
     }
     
     // generate fake data with a few anomalies
-    public static ArrayList<String> createAnomalyData(int numEntries, double anomsPerc) throws FileNotFoundException 
+    public static ArrayList<String> createAnomalyData(int numEntries, double anomsPerc, int seed) throws FileNotFoundException 
     {
         ArrayList<String> list = new ArrayList<String>();
         Scanner sc = new Scanner(new File("Locations.txt"));
@@ -94,13 +94,13 @@ public class GenerateData
         int hour = 8;
         int min = 0;
         Random rand = new Random(3);
-        Random randAnoms = new Random(5);
+        Random randAnoms = new Random(seed);
         
         for (int i = 0; i < numEntries; i++)
         { 
             if (randAnoms.nextInt(100) <= anomsPerc)
             {
-            	hour = rand.nextInt(8);
+             hour = rand.nextInt(8);
                 min = rand.nextInt(59);
             }
             else
@@ -120,10 +120,10 @@ public class GenerateData
             
             if (randAnoms.nextInt(100) <= anomsPerc)
             {
-            	if (i%2 == 0)
-            		location = randLocation1;
-            	else
-            		location = randLocation2;
+             if (i%2 == 0)
+              location = randLocation1;
+             else
+              location = randLocation2;
             }
             else if (i != 0 && i % (numEntries/3) == 0)
             {

@@ -1,8 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -12,13 +10,20 @@ public class GenerateData
     public static void main(String[] args) throws FileNotFoundException 
     {
         ArrayList<String> rawAnomData = createAnomalyData(100, 3, 5);
-        ArrayList<String> rawCleanData = createCleanData(100);
+    //    ArrayList<String> rawCleanData = createCleanData(100);
         
         double[][] parData = parseData(rawAnomData);
         //System.out.println(Arrays.toString(get_cv_labels()));
-        //print2dArr(parData);
+    //    print2dArr(parData);
     }
-    
+    public static void printCV()
+    {
+        int sum = 0;
+        for (int i = 0; i < cv_labels.length; i++) {
+            sum += cv_labels[i];
+        }
+        System.out.println(sum);
+    }
     private static void print2dArr(double[][] arr)
     {
         for (int c = 0; c < arr[0].length; c++)
@@ -29,36 +34,6 @@ public class GenerateData
             }
             System.out.println();
         }
-    }
-    
-    private static int[] createCvLabels(ArrayList<Integer> list)
-    {
-        ArrayList<Integer> ret = new ArrayList<Integer>();
-        int size = list.remove(0), num;
-        Collections.sort(list);
-        //System.out.println(list.size() + " " + Arrays.toString(list.toArray()));
-        int a=1;
-        for (int i = 0; i < list.size(); i++)
-        {
-            num = list.get(i);
-            for (; a < num; a++)
-            {
-                //System.out.println(0 + " ");
-                ret.add(0);
-            }
-            //System.out.println(1 + " ");
-            ret.add(1);
-            a++;
-        }
-        for (int i = list.get(list.size()-1); i < size; i++)
-        {
-            //System.out.println(0 + " ");
-            ret.add(0);
-        }
-        int[] retArr = new int[ret.size()];
-        for (int i = 0; i < ret.size(); i++)
-            retArr[i] = ret.get(i);
-        return retArr;
     }
     
     // parse data into usable information
@@ -81,7 +56,7 @@ public class GenerateData
             parsed[2][i] = 0;
             prevDatas[i] = data;
         }
-        
+        double sum = 0;
         for (int i = 10; i < rawData.size(); i++)
         {
             // one row of data
@@ -148,7 +123,7 @@ public class GenerateData
             if (randAnoms.nextInt(100) <= anomsPerc)
             {
                 cv_labels[i] = 1;
-                amount = 1000 + ((((rand.nextGaussian()%3)+3)/6) * 1000);
+                amount = 500 + ((((rand.nextGaussian()%3)+3)/6) * 1000);
             }
             else
             {
@@ -217,7 +192,7 @@ public class GenerateData
             hour = 8 + (int)((((rand.nextGaussian()%3)+3)/6)*(15));
             min = (int)((((rand.nextGaussian()%3)+3)/6)*(59));
             
-            amount = (((rand.nextGaussian()%3)+3)/6)*(1000);
+            amount = (((rand.nextGaussian()%3)+3)/6)*(100);
             
             if (i != 0 && i % (numEntries/3) == 0)
                 location = sc.nextLine();

@@ -2,3 +2,17 @@ Training finished.
 F_1 Score: 0.8588235294117647
 Accuracy: 97.6%
 Add new entires with this format: Item Time Cost Distance
+
+food
+You are spending more than usual!
+Transaction may be fraudulent!
+Training finished.
+F_1 Score: 0.8654970760233917
+Accuracy: 97.7%
+
+clothes
+Transaction may be fraudulent!
+Training finished.
+F_1 Score: 0.8654970760233917
+Accuracy: 97.7%
+

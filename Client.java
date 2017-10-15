@@ -30,20 +30,52 @@ public class Client {
         for (String a : triggers)
         {
             if(original != null && original.contains(a))
+            {
                 System.out.println("Trigger Keyword: Warning, transaction made is suspicious!");
+                TrainDetection.train(predictor, cv_data, cv_labels, stepSize, iter);
+                return;
+            }
         }
         for (String a : safelist)
         {
             if(original != null && original.contains(a))
+            {
                 System.out.println("Whitelist Keyword: Transaction may seem suspcious but should be safe!");
+                TrainDetection.train(predictor, cv_data, cv_labels, stepSize, iter);
+                return;
+            }
+            
         }
-        TrainDetection.train(predictor, cv_data, cv_labels, stepSize, iter);
         if (ret)
         {
             System.out.println("Transaction may be fraudulent!");
         }
         else 
             System.out.println("Transaction appears to be safe!");
+    }
+    
+    public static double convertTime(String input)
+    {
+        int FULL_DIGITS = 7;
+        int first = 0;
+        int second = 0;
+        int ten = 0;
+        int sum = 0;
+        if(input.length() == FULL_DIGITS)
+        {
+            ten = 600;
+            first = Character.getNumericValue(input.charAt(1)) * 60;
+            second = Character.getNumericValue(input.charAt(3)) * 10 + Character.getNumericValue(input.charAt(4));
+            sum = ten + first + second;
+        }
+        else
+        {
+            first = Character.getNumericValue(input.charAt(0)) * 60;
+            second = Character.getNumericValue(input.charAt(2)) * 10 + Character.getNumericValue(input.charAt(3));
+            sum = ten + first + second;
+        }
+        if(input.charAt(input.length() - 2) == 'P') sum += 720;
+        return sum;
     }
 
     // test client
@@ -68,23 +100,48 @@ public class Client {
         TrainDetection.train(predictor, cv_data, cv_labels, 0.05, 1000);
         TrainDetection.test(predictor, test_data, test_labels);
         
-        ArrayList<String> triggers = new ArrayList<String>();
-        triggers.add("alcohol");
-        ArrayList<String> safelist = new ArrayList<String>();
-        safelist.add("online");
-        Client newClient = new Client(2, triggers, safelist);
-        double[] newEntry = {643, 50, 85};
-        System.out.println("Add new entires with this format: Item Time Cost Distance");
         Scanner input = new Scanner(System.in);
+        
+        ArrayList<String> triggers = new ArrayList<String>();
+        ArrayList<String> safelist = new ArrayList<String>(); 
+        
+        System.out.println("Spending threshold");
+        double factor = Double.parseDouble(input.next());
+        
+        System.out.println("Add trigger words");
+        String word = input.next();
+        while(!word.equals(Integer.toString(0)))
+        {
+            triggers.add(word);
+            word = input.next();
+        }
+        System.out.println("Add safelist words");
+        word = input.next();
+        while(!word.equals(Integer.toString(0)))
+        {
+            safelist.add(word);
+            word = input.next();
+        }
+        Client newClient = new Client(factor, triggers, safelist);
+        System.out.println("Means:\n time = " + predictor.features[0].getMean() + 
+                               ",\n price: " + predictor.features[1].getMean() + " (median: " 
+                                   + predictor.getMedian() + "),\n distance: " + predictor.features[2].getMean());
+        System.out.println("Add new entires with this format: Item Time Cost Distance");
+        System.out.println();
         while(true)
         {
             String string = input.next();
-            double a = Double.parseDouble(input.next());
+            double a = convertTime(input.next());
             double b = Double.parseDouble(input.next());
             double c = Double.parseDouble(input.next());
             double[] nextEntry = {a, b, c};
+            System.out.println(string);
             newClient.addEntry(predictor, cv_data, cv_labels, 0.5, 1000, nextEntry, string);
             TrainDetection.test(predictor, test_data, test_labels);
+            System.out.println("Means: time = " + predictor.features[0].getMean() + 
+                               ", price: " + predictor.features[1].getMean() + " (median: " 
+                                   + predictor.getMedian() + "), distance: " + predictor.features[2].getMean());
+            System.out.println();
         }
     }
 }

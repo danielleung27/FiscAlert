@@ -23,7 +23,7 @@ function createInfo() {
     hello.innerHTML = '';
     const helloMessage = document.createElement('p');
     helloMessage.textContent = "Hello, " + name
-        + ". Here is your financial security status";
+        + ". Here is your financial security status:";
     hello.appendChild(helloMessage);
 
     fetch("../../output.txt")

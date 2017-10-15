@@ -107,12 +107,14 @@ public class Client {
         
         System.out.println("Spending threshold");
         double factor = Double.parseDouble(input.next());
+        System.out.println(factor);
         
         System.out.println("Add trigger words");
         String word = input.next();
         while(!word.equals(Integer.toString(0)))
         {
             triggers.add(word);
+            System.out.print(word + " ");
             word = input.next();
         }
         System.out.println("Add safelist words");
@@ -120,6 +122,7 @@ public class Client {
         while(!word.equals(Integer.toString(0)))
         {
             safelist.add(word);
+            System.out.print(word + " ");
             word = input.next();
         }
         Client newClient = new Client(factor, triggers, safelist);

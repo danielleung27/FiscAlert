@@ -16,9 +16,8 @@ function fileOption() {
     fileOpt.classList.remove('hidden');
     const fileInput = document.getElementById('fileInput');
     const fileDisplayArea = document.getElementById('fileDisplayArea');
-    fileInput.addEventListener('change', function(e) {
-        const file = fileInput.files[0];
-        const textType = /text.*/;
+    fileInput.addEventListener('click', function(e) {
+        fetch("")
         if (file.type.match(textType)) {
             const reader = new FileReader();
             reader.onload = function(e) {

@@ -14,26 +14,10 @@ function onSubmit() {
 
 function fileOption() {
     fileOpt.classList.remove('hidden');
-
-    fileInput.addEventListener('click', createInfo);/*function(e) {
-        fetch("../output.txt").then
-        if (file.type.match(textType)) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                fileDisplayArea.innerText = reader.result;
-                console.log(fileDisplayArea.innerText);
-            } 
-            reader.readAsText(file);
-            createInfo();	
-        } else {
-            fileDisplayArea.innerText = "File not supported!"
-        }
-    });*/
+    fileInput.addEventListener('click', createInfo);
 }
 
 function createInfo() {
-    
-    //fileOpt.classList.add('hidden');
     console.log("Creating info");
     const hello = document.querySelector('#hello');
     hello.innerHTML = '';
@@ -41,8 +25,8 @@ function createInfo() {
     helloMessage.textContent = "Hello, " + name
         + ". Here is your financial security status";
     hello.appendChild(helloMessage);
-    
-    fetch("../output.txt")
+
+    fetch("../../output.txt")
     .then(function(response) {
         return response.text()
     }).then(function(body) {

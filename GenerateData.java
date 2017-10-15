@@ -1,15 +1,17 @@
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Random;
 import java.util.Scanner;
+import java.io.Writer;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class GenerateData
 {
- // constants
- //============================================================================
+    // constants
+    //============================================================================
     private static int[] cv_labels;
     private static final int ANOMALY = 1;
     private static final int NORMAL = 0;
@@ -23,16 +25,21 @@ public class GenerateData
     private static String randLocation2 = "AL-Montgomery_32.3668N,086.3000W";
     //=============================================================================
     
-    public static void main(String[] args) throws FileNotFoundException 
+    public static void main(String[] args) throws FileNotFoundException
     {
-        ArrayList<String> rawAnomData = createAnomalyData(100, 3, 5);
-        ArrayList<String> rawCleanData = createCleanData(100);
-        
-        double[][] parData = parseData(rawAnomData);
-        //System.out.println(Arrays.toString(get_cv_labels()));
-        print2dArr(parData);
     }
     
+    public static void outputToFile(ArrayList<String> raw_data, String fileName) throws IOException
+    {
+        Writer out = new FileWriter(fileName);
+        for (int i = 0; i < raw_data.size(); i++)
+        {
+            out.write(raw_data.get(i));
+            out.write("\n");
+        }
+        out.close();
+    }
+
     private static void print2dArr(double[][] arr)
     {
         for (int c = 0; c < arr[0].length; c++)
@@ -144,7 +151,7 @@ public class GenerateData
     // shift the guassian shift to return a positive value
     private static double gaussShift(Random rand, int seed)
     {
-     return (((rand.nextGaussian()%seed)+seed)/(2*seed));
+        return (((rand.nextGaussian()%seed)+seed)/(2*seed));
     }
     
     // generate fake data with a few anomalies
@@ -246,7 +253,7 @@ public class GenerateData
             min = (int)(gaussShift(rand, DEFAULT_SEED) * 59);
             
             amount = gaussShift(rand, DEFAULT_SEED) * 100;
-
+            
             if (i != 0 && i % (numEntries/3) == 0)
                 location = sc.nextLine();
             else

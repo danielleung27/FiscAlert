@@ -1,0 +1,4 @@
+Training finished.
+F_1 Score: 0.8588235294117647
+Accuracy: 97.6%
+Add new entires with this format: Item Time Cost Distance

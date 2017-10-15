@@ -117,6 +117,7 @@ public class Client {
             System.out.print(word + " ");
             word = input.next();
         }
+        System.out.println();
         System.out.println("Add safelist words");
         word = input.next();
         while(!word.equals(Integer.toString(0)))

@@ -14,10 +14,9 @@ function onSubmit() {
 
 function fileOption() {
     fileOpt.classList.remove('hidden');
-    const fileInput = document.getElementById('fileInput');
-    const fileDisplayArea = document.getElementById('fileDisplayArea');
-    fileInput.addEventListener('click', function(e) {
-        fetch("")
+
+    fileInput.addEventListener('click', createInfo);/*function(e) {
+        fetch("../output.txt").then
         if (file.type.match(textType)) {
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -29,10 +28,11 @@ function fileOption() {
         } else {
             fileDisplayArea.innerText = "File not supported!"
         }
-    });
+    });*/
 }
 
 function createInfo() {
+    
     //fileOpt.classList.add('hidden');
     console.log("Creating info");
     const hello = document.querySelector('#hello');
@@ -41,6 +41,13 @@ function createInfo() {
     helloMessage.textContent = "Hello, " + name
         + ". Here is your financial security status";
     hello.appendChild(helloMessage);
+    
+    fetch("../output.txt")
+    .then(function(response) {
+        return response.text()
+    }).then(function(body) {
+            fileDisplayArea.textContent = body 
+    });
     info.classList.remove('hidden');
 }
 
@@ -54,6 +61,7 @@ button.addEventListener('click', onSubmit);
 const fileOpt = document.querySelector('#fileOption');
 const info = document.querySelector('#info');
 let outcome;
-
+const fileInput = document.getElementById('fileInput');
+const fileDisplayArea = document.getElementById('fileDisplayArea');
 
  

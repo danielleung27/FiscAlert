@@ -126,6 +126,7 @@ public class Client {
             System.out.print(word + " ");
             word = input.next();
         }
+        System.out.println();
         Client newClient = new Client(factor, triggers, safelist);
         System.out.println("Means:\n time = " + predictor.features[0].getMean() + 
                                ",\n price: " + predictor.features[1].getMean() + " (median: " 

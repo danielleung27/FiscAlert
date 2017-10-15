@@ -145,20 +145,22 @@ header nav {
 	color: white;
 }
 
-#links {
+#logo {
+	font-size: 40px;
+	}
+	
+#topright {
 	font-family: 'Open Sans', sans-serif;
 	font-style: normal;
 	letter-spacing: 1px;
 	text-transform: uppercase;
 }
 
-#links a {
+#topright a {
 	margin: 15px;
 }
 
-#logo {
-	font-size: 40px;
-  }
+
 
 
 .test {

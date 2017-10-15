@@ -10,6 +10,7 @@ body {
 	background-image: linear-gradient(rgba(0,0,0,.6), rgba(0,0,0,.6)),
 	url(../images/pexels-photo.jpeg);
 	background-position: bottom;
+	overflow: hidden;
 }
 .btn {
 	background: #d3d2db;
@@ -53,6 +54,7 @@ button a, header a, div a{
 .container {
 	/*border: 1px solid red;*/
 	display: flex;
+	flex-direction: column;
 	width: 100%;
 	justify-content: center;
 	align-items: center;
@@ -61,6 +63,14 @@ button a, header a, div a{
 	border-radius: 2px;
 	background-color: lightblue;
 	margin: 0 auto;
+}
+
+#fileDisplayArea {
+	
+}
+#fileOption {
+	position: relative;
+	top: -55px;
 }
 
 .float_center {
@@ -73,6 +83,8 @@ button a, header a, div a{
 
 #form {
 	color: white;
+	position: relative;
+	top: -55px;
 }
 
 header {
@@ -128,21 +140,22 @@ header nav {
 	align-items: center;
 }
 
-
-.headtxt{
-	font-family: /*"Tahoma", "Trebuchet MS", "Roboto Slab", */Roboto, sans-serif;
-	font-weight: normal;
-	font-size: 50px;
-	text-align: center;
-	color: lightgray;
-}
-
 .hidden {
 	display: none;
 }
 
 #info {
 	color: white;
+	/*border: 1px solid green;*/
+	overflow: auto;
+	height: 70vh;
+	width: 80%;
+	background-color: lightgray;
+	color: black;
+	border-radius: 5px;
+	padding: 10px;
+	position: relative;
+	top: -30px;
 }
 
 #logo {
@@ -158,14 +171,6 @@ header nav {
 
 #topright a {
 	margin: 15px;
-}
-
-
-
-
-.test {
-	height: 60vw;
-	width: 100vw;
 }
 
 .white {

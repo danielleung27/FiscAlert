@@ -1,18 +1,28 @@
 Training finished.
 F_1 Score: 0.8588235294117647
 Accuracy: 97.6%
+Spending threshold
+2.0
+Add trigger words
+Dog 
+Add safelist words
+Cat Means:
+ time = 923.895,
+ price: 50.32107577799997 (median: 50.197966),
+ distance: 84.34895104611854
 Add new entires with this format: Item Time Cost Distance
 
-food
-You are spending more than usual!
-Transaction may be fraudulent!
+Dogfood
+Trigger Keyword: Warning, transaction made is suspicious!
 Training finished.
-F_1 Score: 0.8654970760233917
-Accuracy: 97.7%
+F_1 Score: 0.8452380952380952
+Accuracy: 97.4%
+Means: time = 923.1818181818181, price: 50.326749028971 (median: 50.197966), distance: 84.35459644966888
 
-clothes
-Transaction may be fraudulent!
+cat
+Transaction appears to be safe!
 Training finished.
-F_1 Score: 0.8654970760233917
-Accuracy: 97.7%
+F_1 Score: 0.8520710059171597
+Accuracy: 97.5%
+Means: time = 923.3383233532934, price: 50.32143291217562 (median: 50.197966), distance: 84.35923258095663
 
